@@ -84,10 +84,10 @@ func evalCommand(command string) {
 
 	splittedCommand := strings.Split(command, " ")
 
-	if len(splittedCommand) < 2 {
-		fmt.Printf("No args provided for command %s\n", splittedCommand[0])
-		return
-	}
+	// if len(splittedCommand) < 2 {
+	// 	fmt.Printf("No args provided for command %s\n", splittedCommand[0])
+	// 	return
+	// }
 
 	switch strings.ToUpper(splittedCommand[0]) {
 	case EXIT:
