@@ -4,10 +4,32 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
-// Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
-var _ = fmt.Fprint
+func evalExit(input []string) {
+	exitCode, err := strconv.Atoi(input[1])
+
+	if err != nil {
+		fmt.Println("Unable to parse Exit Code. Error Details: " + err.Error())
+	}
+
+	os.Exit(exitCode)
+}
+
+func evalCommand(command string) {
+	// trimming new line at the end
+	command = command[:len(command)-1]
+
+	splittedCommand := strings.Split(command, " ")
+	switch splittedCommand[0] {
+	case "exit":
+		evalExit(splittedCommand)
+	default:
+		fmt.Println(command + ": command not found")
+	}
+}
 
 func main() {
 
@@ -22,7 +44,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		fmt.Println(command[:len(command)-1] + ": command not found")
+		evalCommand(command)
 	}
 
 }
