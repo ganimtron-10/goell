@@ -8,8 +8,14 @@ import (
 	"strings"
 )
 
-func exit(input []string) {
-	exitCode, err := strconv.Atoi(input[1])
+const (
+	EXIT = "EXIT"
+	ECHO = "ECHO"
+	TYPE = "TYPE"
+)
+
+func exit(args []string) {
+	exitCode, err := strconv.Atoi(args[0])
 
 	if err != nil {
 		fmt.Println("Unable to parse Exit Code. Error Details: " + err.Error())
@@ -19,11 +25,28 @@ func exit(input []string) {
 	os.Exit(exitCode)
 }
 
-func echo(input []string) {
-	for _, ele := range input[1:] {
+func echo(args []string) {
+	for _, ele := range args {
 		fmt.Print(ele, " ")
 	}
 	fmt.Println()
+}
+
+func evalType(args []string) {
+	commandList := []string{EXIT, ECHO, TYPE}
+	isInbuilt := false
+
+	for _, ele := range commandList {
+		if strings.ToUpper(args[0]) == ele {
+			isInbuilt = true
+		}
+	}
+
+	if isInbuilt {
+		fmt.Println(args[0] + " is a shell builtin")
+	} else {
+		fmt.Println(args[0] + ": not found")
+	}
 }
 
 func evalCommand(command string) {
@@ -31,11 +54,13 @@ func evalCommand(command string) {
 	command = command[:len(command)-1]
 
 	splittedCommand := strings.Split(command, " ")
-	switch splittedCommand[0] {
-	case "exit":
-		exit(splittedCommand)
-	case "echo":
-		echo(splittedCommand)
+	switch strings.ToUpper(splittedCommand[0]) {
+	case EXIT:
+		exit(splittedCommand[1:])
+	case ECHO:
+		echo(splittedCommand[1:])
+	case TYPE:
+		evalType(splittedCommand[1:])
 	default:
 		fmt.Println(command + ": command not found")
 	}
