@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -33,10 +34,28 @@ func echo(args []string) {
 	fmt.Println()
 }
 
+func checkExecutable(commandName string) string {
+	pathValue := os.Getenv("PATH")
+	pathList := strings.Split(pathValue, ":")
+	for _, path := range pathList {
+		fullPath := filepath.Join(path, commandName)
+
+		_, err := os.Stat(fullPath)
+		if err == nil {
+			return fullPath
+		}
+
+		if !os.IsNotExist(err) {
+			fmt.Printf("Error while checking path %s. Error Details: %s\n", fullPath, err.Error())
+		}
+
+	}
+	return ""
+}
+
 func evalType(args []string) {
 	commandList := []string{EXIT, ECHO, TYPE}
 	isInbuilt := false
-	executablePath := ""
 
 	// check if builtin
 	for _, ele := range commandList {
@@ -47,23 +66,7 @@ func evalType(args []string) {
 	}
 
 	// check if present in PATH
-	pathValue := os.Getenv("PATH")
-	pathList := strings.Split(pathValue, ":")
-	for _, path := range pathList {
-		fullPath := filepath.Join(path, args[0])
-
-		_, err := os.Stat(fullPath)
-		if err == nil {
-			executablePath = fullPath
-			break
-		}
-
-		if !os.IsNotExist(err) {
-			fmt.Printf("Error while checking path %s. Error Details: %s\n", fullPath, err.Error())
-			os.Exit(1)
-		}
-
-	}
+	executablePath := checkExecutable(args[0])
 
 	if isInbuilt {
 		fmt.Println(args[0] + " is a shell builtin")
@@ -71,6 +74,17 @@ func evalType(args []string) {
 		fmt.Println(args[0] + " is " + executablePath)
 	} else {
 		fmt.Println(args[0] + ": not found")
+	}
+}
+
+func execute(executablePath string, args []string) {
+	command := exec.Command(executablePath, args...)
+	command.Stderr = os.Stderr
+	command.Stdout = os.Stdout
+	err := command.Run()
+	if err != nil {
+		fmt.Println("Error while executing " + executablePath + ". Error details: " + err.Error())
+		os.Exit(1)
 	}
 }
 
@@ -97,7 +111,12 @@ func evalCommand(command string) {
 	case TYPE:
 		evalType(splittedCommand[1:])
 	default:
-		fmt.Println(command + ": command not found")
+		if executablePath := checkExecutable(splittedCommand[0]); executablePath != "" {
+			execute(executablePath, splittedCommand[1:])
+		} else {
+			fmt.Println(command + ": command not found")
+		}
+
 	}
 }
 
