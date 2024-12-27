@@ -14,6 +14,7 @@ const (
 	EXIT = "EXIT"
 	ECHO = "ECHO"
 	TYPE = "TYPE"
+	PWD  = "PWD"
 )
 
 func exit(args []string) {
@@ -77,6 +78,15 @@ func evalType(args []string) {
 	}
 }
 
+func pwd() {
+	dirPath, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error while getting current working dirtectory. Error details: " + err.Error())
+		os.Exit(1)
+	}
+	fmt.Println(dirPath)
+}
+
 func execute(executablePath string, args []string) {
 	command := exec.Command(executablePath, args...)
 	command.Stderr = os.Stderr
@@ -110,6 +120,8 @@ func evalCommand(command string) {
 		echo(splittedCommand[1:])
 	case TYPE:
 		evalType(splittedCommand[1:])
+	case PWD:
+		pwd()
 	default:
 		if executablePath := checkExecutable(splittedCommand[0]); executablePath != "" {
 			execute(executablePath, splittedCommand[1:])
