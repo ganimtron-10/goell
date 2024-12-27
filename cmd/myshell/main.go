@@ -55,7 +55,7 @@ func checkExecutable(commandName string) string {
 }
 
 func evalType(args []string) {
-	commandList := []string{EXIT, ECHO, TYPE}
+	commandList := []string{EXIT, ECHO, TYPE, PWD}
 	isInbuilt := false
 
 	// check if builtin
