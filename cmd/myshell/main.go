@@ -15,6 +15,7 @@ const (
 	ECHO = "ECHO"
 	TYPE = "TYPE"
 	PWD  = "PWD"
+	CD   = "CD"
 )
 
 func exit(args []string) {
@@ -55,7 +56,7 @@ func checkExecutable(commandName string) string {
 }
 
 func evalType(args []string) {
-	commandList := []string{EXIT, ECHO, TYPE, PWD}
+	commandList := []string{EXIT, ECHO, TYPE, PWD, CD}
 	isInbuilt := false
 
 	// check if builtin
@@ -85,6 +86,17 @@ func pwd() {
 		os.Exit(1)
 	}
 	fmt.Println(dirPath)
+}
+
+func cd(args []string) {
+	if len(args) < 1 {
+		return
+	}
+
+	err := os.Chdir(args[0])
+	if err != nil {
+		fmt.Printf("cd: %s: No such file or directory", args[0])
+	}
 }
 
 func execute(executablePath string, args []string) {
@@ -122,6 +134,8 @@ func evalCommand(command string) {
 		evalType(splittedCommand[1:])
 	case PWD:
 		pwd()
+	case CD:
+		cd(splittedCommand[1:])
 	default:
 		if executablePath := checkExecutable(splittedCommand[0]); executablePath != "" {
 			execute(executablePath, splittedCommand[1:])
