@@ -114,6 +114,15 @@ func execute(executablePath string, args []string) {
 	}
 }
 
+func modifiedFields(str string) []string {
+	modFields := []string{}
+	orgFields := strings.Fields(str)
+	for _, ele := range orgFields {
+		modFields = append(modFields, strings.ReplaceAll(ele, "\\", ""))
+	}
+	return modFields
+}
+
 func parseCommand(command string) []string {
 	parsedCommand := []string{}
 
@@ -126,10 +135,10 @@ func parseCommand(command string) []string {
 	for {
 		start := strings.IndexAny(command, "'\"")
 		if start == -1 {
-			parsedCommand = append(parsedCommand, strings.Fields(command)...)
+			parsedCommand = append(parsedCommand, modifiedFields(command)...)
 			break
 		}
-		parsedCommand = append(parsedCommand, strings.Fields(command[:start])...)
+		parsedCommand = append(parsedCommand, modifiedFields(command[:start])...)
 
 		quote := command[start]
 		command = command[start+1:]
