@@ -114,6 +114,33 @@ func execute(executablePath string, args []string) {
 	}
 }
 
+func parseCommand(command string) []string {
+	parsedCommand := []string{}
+
+	firstSpaceLocation := strings.Index(command, " ")
+	if firstSpaceLocation != -1 {
+		parsedCommand = append(parsedCommand, command[:firstSpaceLocation])
+	}
+	command = command[firstSpaceLocation+1:]
+
+	for {
+		start := strings.IndexAny(command, "'\"")
+		if start == -1 {
+			parsedCommand = append(parsedCommand, strings.Fields(command)...)
+			break
+		}
+		parsedCommand = append(parsedCommand, strings.Fields(command[:start])...)
+
+		quote := command[start]
+		command = command[start+1:]
+		end := strings.IndexByte(command, quote)
+		parsedCommand = append(parsedCommand, command[:end])
+		command = command[end+1:]
+	}
+
+	return parsedCommand
+}
+
 func evalCommand(command string) {
 	// trimming new line at the end
 	command = command[:len(command)-1]
@@ -122,7 +149,7 @@ func evalCommand(command string) {
 		return
 	}
 
-	splittedCommand := strings.Split(command, " ")
+	splittedCommand := parseCommand(command)
 
 	// if len(splittedCommand) < 2 {
 	// 	fmt.Printf("No args provided for command %s\n", splittedCommand[0])
