@@ -163,16 +163,16 @@ func parseCommand2(command string) []string {
 		if char == "'" && !isDoubleQuote {
 			if isSingleQuote {
 				isSingleQuote = false
-				parsedCommand = append(parsedCommand, curToken)
-				curToken = ""
+				// parsedCommand = append(parsedCommand, curToken)
+				// curToken = ""
 			} else {
 				isSingleQuote = true
 			}
 		} else if char == "\"" && !isSingleQuote {
 			if isDoubleQuote {
 				isDoubleQuote = false
-				parsedCommand = append(parsedCommand, curToken)
-				curToken = ""
+				// parsedCommand = append(parsedCommand, curToken)
+				// curToken = ""
 			} else {
 				isDoubleQuote = true
 			}
