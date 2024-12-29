@@ -160,22 +160,10 @@ func parseCommand2(command string) []string {
 	for i := 0; i < len(command); i++ {
 		char := string(command[i])
 
-		if char == "'" && !isDoubleQuote {
-			if isSingleQuote {
-				isSingleQuote = false
-				// parsedCommand = append(parsedCommand, curToken)
-				// curToken = ""
-			} else {
-				isSingleQuote = true
-			}
+		if char == "'" {
+			isSingleQuote = !isSingleQuote
 		} else if char == "\"" && !isSingleQuote {
-			if isDoubleQuote {
-				isDoubleQuote = false
-				// parsedCommand = append(parsedCommand, curToken)
-				// curToken = ""
-			} else {
-				isDoubleQuote = true
-			}
+			isDoubleQuote = !isDoubleQuote
 		} else if char == "\\" {
 			if isSingleQuote {
 				curToken += string(command[i])
