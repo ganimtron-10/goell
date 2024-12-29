@@ -161,6 +161,9 @@ func parseCommand2(command string) []string {
 		char := string(command[i])
 
 		if char == "'" {
+			if isDoubleQuote {
+				curToken += char
+			}
 			isSingleQuote = !isSingleQuote
 		} else if char == "\"" && !isSingleQuote {
 			isDoubleQuote = !isDoubleQuote
