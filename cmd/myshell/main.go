@@ -150,6 +150,59 @@ func parseCommand(command string) []string {
 	return parsedCommand
 }
 
+func parseCommand2(command string) []string {
+	parsedCommand := []string{}
+	isSingleQuote := false
+	isDoubleQuote := false
+	// isEscaped := false
+	curToken := ""
+
+	for i := 0; i < len(command); i++ {
+		char := string(command[i])
+
+		if char == "'" && !isDoubleQuote {
+			if isSingleQuote {
+				isSingleQuote = false
+				parsedCommand = append(parsedCommand, curToken)
+				curToken = ""
+			} else {
+				isSingleQuote = true
+			}
+		} else if char == "\"" && !isSingleQuote {
+			if isDoubleQuote {
+				isDoubleQuote = false
+				parsedCommand = append(parsedCommand, curToken)
+				curToken = ""
+			} else {
+				isDoubleQuote = true
+			}
+		} else if char == "\\" {
+			if isSingleQuote {
+				curToken += string(command[i])
+			} else {
+				if i+1 < len(command) {
+					i++
+					curToken += string(command[i])
+				}
+			}
+		} else if char == " " && !isSingleQuote && !isDoubleQuote {
+			if curToken != "" {
+				parsedCommand = append(parsedCommand, curToken)
+				curToken = ""
+			}
+		} else {
+			curToken += char
+		}
+
+	}
+	if curToken != "" {
+		parsedCommand = append(parsedCommand, curToken)
+	}
+
+	// fmt.Println(parsedCommand)
+	return parsedCommand
+}
+
 func evalCommand(command string) {
 	// trimming new line at the end
 	command = command[:len(command)-1]
@@ -158,7 +211,7 @@ func evalCommand(command string) {
 		return
 	}
 
-	splittedCommand := parseCommand(command)
+	splittedCommand := parseCommand2(command)
 
 	// if len(splittedCommand) < 2 {
 	// 	fmt.Printf("No args provided for command %s\n", splittedCommand[0])
