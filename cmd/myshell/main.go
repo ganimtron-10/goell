@@ -228,8 +228,10 @@ func parseCommand3(command string) []string {
 		} else if char == "\"" && !isSingleQuote {
 			isDoubleQuote = !isDoubleQuote
 		} else if char == " " && !isSingleQuote && !isDoubleQuote {
-			parsedCommand = append(parsedCommand, curToken)
-			curToken = ""
+			if curToken != "" {
+				parsedCommand = append(parsedCommand, curToken)
+				curToken = ""
+			}
 		} else {
 			curToken += char
 		}
