@@ -174,11 +174,12 @@ func execute(executablePath string, args []string) {
 	command := exec.Command(executablePath, args...)
 	command.Stderr = errorWriter
 	command.Stdout = normalWriter
-	err := command.Run()
-	if err != nil {
-		// fmt.Fprintln(errorWriter, "Error while executing "+executablePath+". Error details: "+err.Error())
-		os.Exit(1)
-	}
+	// err := command.Run()
+	// if err != nil {
+	// 	// fmt.Fprintln(errorWriter, "Error while executing "+executablePath+". Error details: "+err.Error())
+	// 	os.Exit(1)
+	// }
+	command.Run()
 }
 
 // func modifiedFields(str string) []string {
