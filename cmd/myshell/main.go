@@ -20,11 +20,11 @@ const (
 )
 
 func exit(args []string) {
-	args, _, errorWriter := checkRedirection(args)
+	args, _, _ = checkRedirection(args)
 	exitCode, err := strconv.Atoi(args[0])
 
 	if err != nil {
-		fmt.Fprintln(errorWriter, "Unable to parse Exit Code. Error Details: "+err.Error())
+		// fmt.Fprintln(errorWriter, "Unable to parse Exit Code. Error Details: "+err.Error())
 		os.Exit(1)
 	}
 
@@ -43,7 +43,7 @@ func checkRedirection(args []string) ([]string, io.Writer, io.Writer) {
 			file, err := os.OpenFile(args[i+1], os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 
 			if err != nil {
-				fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
+				// fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
 				os.Exit(1)
 			}
 
@@ -54,7 +54,7 @@ func checkRedirection(args []string) ([]string, io.Writer, io.Writer) {
 			file, err := os.OpenFile(args[i+1], os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 
 			if err != nil {
-				fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
+				// fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
 				os.Exit(1)
 			}
 
@@ -65,7 +65,7 @@ func checkRedirection(args []string) ([]string, io.Writer, io.Writer) {
 			file, err := os.OpenFile(args[i+1], os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 
 			if err != nil {
-				fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
+				// fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
 				os.Exit(1)
 			}
 
@@ -76,7 +76,7 @@ func checkRedirection(args []string) ([]string, io.Writer, io.Writer) {
 			file, err := os.OpenFile(args[i+1], os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 
 			if err != nil {
-				fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
+				// fmt.Fprintln(errorWriter, "Error while handling redirection file. Error details: "+err.Error())
 				os.Exit(1)
 			}
 
@@ -110,9 +110,9 @@ func checkExecutable(commandName string) string {
 			return fullPath
 		}
 
-		if !os.IsNotExist(err) {
-			fmt.Printf("Error while checking path %s. Error Details: %s\n", fullPath, err.Error())
-		}
+		// if !os.IsNotExist(err) {
+		// 	fmt.Printf("Error while checking path %s. Error Details: %s\n", fullPath, err.Error())
+		// }
 
 	}
 	return ""
@@ -144,10 +144,10 @@ func evalType(args []string) {
 }
 
 func pwd(args []string) {
-	args, normalWriter, errorWriter := checkRedirection(args)
+	_, normalWriter, _ := checkRedirection(args)
 	dirPath, err := os.Getwd()
 	if err != nil {
-		fmt.Fprintln(errorWriter, "Error while getting current working dirtectory. Error details: "+err.Error())
+		// fmt.Fprintln(errorWriter, "Error while getting current working dirtectory. Error details: "+err.Error())
 		os.Exit(1)
 	}
 	fmt.Fprintln(normalWriter, dirPath)
@@ -176,7 +176,7 @@ func execute(executablePath string, args []string) {
 	command.Stdout = normalWriter
 	err := command.Run()
 	if err != nil {
-		fmt.Fprintln(errorWriter, "Error while executing "+executablePath+". Error details: "+err.Error())
+		// fmt.Fprintln(errorWriter, "Error while executing "+executablePath+". Error details: "+err.Error())
 		os.Exit(1)
 	}
 }
