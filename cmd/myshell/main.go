@@ -170,10 +170,10 @@ func cd(args []string) {
 }
 
 func execute(executablePath string, args []string) {
-	args, _, errorWriter := checkRedirection(args)
+	args, normalWriter, errorWriter := checkRedirection(args)
 	command := exec.Command(executablePath, args...)
-	command.Stderr = os.Stderr
-	command.Stdout = os.Stdout
+	command.Stderr = errorWriter
+	command.Stdout = normalWriter
 	err := command.Run()
 	if err != nil {
 		fmt.Fprintln(errorWriter, "Error while executing "+executablePath+". Error details: "+err.Error())
